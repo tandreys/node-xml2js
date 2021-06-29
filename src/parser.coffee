@@ -190,6 +190,10 @@ class exports.Parser extends events
           if Object.keys(obj).length == 1 and charkey of obj and not @EXPLICIT_CHARKEY
             obj = obj[charkey]
 
+        else if @options.preserveChildrenOrder
+          index = if s then Math.max(Object.keys(s).length - 2, 0) else 0
+          obj[@options.sortkey] = index
+
       # check whether we closed all the open tags
       if stack.length > 0
         @assignOrPush s, nodeName, obj

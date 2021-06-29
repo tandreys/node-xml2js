@@ -69,5 +69,6 @@ exports.defaults = {
     headless: false
     chunkSize: 10000
     emptyTag: ''
-    cdata: false
+    cdata: false,
+    sortkey: '#index'
 }

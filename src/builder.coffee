@@ -30,6 +30,7 @@ class exports.Builder
   buildObject: (rootObj) ->
     attrkey = @options.attrkey
     charkey = @options.charkey
+    sortkey = @options.sortkey
 
     # If there is a sane-looking first element to use as the root,
     # and the user hasn't specified a non-default rootName,
@@ -42,6 +43,8 @@ class exports.Builder
       rootName = @options.rootName
 
     render = (element, obj) =>
+      list = [];
+
       if typeof obj isnt 'object'
         # single element, just append it as text
         if @options.cdata && requiresCDATA obj
@@ -68,9 +71,26 @@ class exports.Builder
               element = element.raw wrapCDATA child
             else
               element = element.txt child
+          
+          else if key is sortkey
+             console.log(key)
+            # noop
+          else
+            if Array.isArray child
+              for own index, entry of child
+                list.push {key:key, child:entry}
+            else 
+              list.push {key:key, child: child}
+
+        list.sort (a, b) ->
+          return (a.child[sortkey] || -1) - (b.child[sortkey] || -1)
+
+        for own index, entry of list
+          key = entry.key
+          child = entry.child
 
           # Case #3 Array data
-          else if Array.isArray child
+          if Array.isArray child
             for own index, entry of child
               if typeof entry is 'string'
                 if @options.cdata && requiresCDATA entry
